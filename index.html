@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Racha Contas — Divida sem stress</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --brand: #820ad1;
+      --brand-light: #c06ef3;
+      --brand-dark: #5e0898;
+      --bg: #f0eeff;
+      --surface: #ffffff;
+      --surface2: #f5f3ff;
+      --text: #1a1a2e;
+      --text2: #6b6b8a;
+      --border: rgba(108, 92, 231, 0.15);
+      --success: #00b894;
+      --danger: #d63031;
+      --radius: 16px;
+      --radius-sm: 10px;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 2rem 1rem;
+    }
+
+    .app {
+      max-width: 700px;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    /* BOTÃO EDUCAÇÃO FINANCEIRA */
+    .edu-btn {
+      position: fixed;
+      top: 2rem;
+      right: 2rem;
+      background: linear-gradient(135deg, var(--brand), var(--brand-light));
+      color: #fff;
+      border: none;
+      padding: .7rem 1.4rem;
+      border-radius: var(--radius);
+      font-size: .9rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all .2s cubic-bezier(.4,0,.2,1);
+      box-shadow: 0 4px 16px rgba(130, 10, 209, 0.3);
+      z-index: 1000;
+      font-family: inherit;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .edu-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(130, 10, 209, 0.4);
+      background: linear-gradient(135deg, var(--brand-dark), var(--brand));
+    }
+    .edu-btn:active {
+      transform: translateY(0);
+    }
+
+    @media (max-width: 768px) {
+      .edu-btn {
+        top: 1.5rem;
+        right: 1.5rem;
+        padding: .6rem 1.2rem;
+        font-size: .85rem;
+      }
+    }
+
+    /* HERO */
+    .hero {
+      background: linear-gradient(135deg, #820ad1 0%, #c06ef3 100%);
+      border-radius: var(--radius);
+      padding: 2.5rem 2rem;
+      text-align: center;
+      color: #fff;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 8px 32px rgba(108, 92, 231, 0.25);
+    }
+    .hero h1 { font-size: 2rem; font-weight: 800; margin-bottom: .5rem; }
+    .hero p { font-size: 1rem; opacity: .88; margin-bottom: 1.5rem; line-height: 1.5; }
+    .btn-hero {
+      background: #fff;
+      color: #820ad1;
+      border: none;
+      padding: .8rem 2.2rem;
+      border-radius: 40px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform .15s, box-shadow .15s;
+      box-shadow: 0 4px 14px rgba(0,0,0,.15);
+    }
+    .btn-hero:hover { transform: scale(1.05); box-shadow: 0 6px 20px rgba(0,0,0,.2); }
+
+    /* FEATURE CARDS */
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .feature-card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      padding: 1.5rem 1rem;
+      text-align: center;
+      border: 1px solid var(--border);
+      box-shadow: 0 2px 12px rgba(108,92,231,.06);
+    }
+    .feature-icon { font-size: 2.2rem; margin-bottom: .6rem; }
+    .feature-card h3 { font-size: .95rem; font-weight: 700; margin-bottom: .3rem; }
+    .feature-card p { font-size: .8rem; color: var(--text2); line-height: 1.4; }
+
+    /* TABS */
+    .tabs {
+      display: flex;
+      gap: 4px;
+      background: var(--surface);
+      border-radius: 50px;
+      padding: 5px;
+      margin-bottom: 1.5rem;
+      border: 1px solid var(--border);
+    }
+    .tab {
+      flex: 1;
+      padding: .55rem;
+      border: none;
+      background: transparent;
+      border-radius: 50px;
+      font-size: .85rem;
+      cursor: pointer;
+      color: var(--text2);
+      font-weight: 600;
+      transition: all .2s;
+    }
+    .tab.active { background: var(--brand); color: #fff; }
+    .tab:hover:not(.active) { background: var(--surface2); }
+
+    /* PANELS */
+    .panel { display: none; }
+    .panel.active { display: block; }
+
+    /* CARD */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.4rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 2px 12px rgba(108,92,231,.05);
+    }
+    .card-title {
+      font-size: .75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      color: var(--brand);
+      margin-bottom: 1rem;
+    }
+
+    /* FORM ELEMENTS */
+    .row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: .8rem;
+    }
+    .row label {
+      font-size: .85rem;
+      color: var(--text2);
+      min-width: 95px;
+      font-weight: 500;
+    }
+    input[type=text],
+    input[type=number],
+    select {
+      flex: 1;
+      padding: .6rem .9rem;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: .9rem;
+      background: var(--surface2);
+      color: var(--text);
+      transition: border-color .2s;
+      outline: none;
+    }
+    input:focus, select:focus { border-color: var(--brand); background: #fff; }
+
+    /* AMIGOS */
+    .amigos-list { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+    .amigo-tag {
+      background: #f3e5fd;
+      color: #5a0791;
+      border-radius: 20px;
+      padding: .35rem .9rem;
+      font-size: .82rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .amigo-tag button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #820ad1;
+      font-size: 1.1rem;
+      line-height: 1;
+      padding: 0;
+    }
+    .add-btn {
+      background: #f3e5fd;
+      color: var(--brand);
+      border: none;
+      padding: .5rem 1.1rem;
+      border-radius: 20px;
+      font-size: .83rem;
+      cursor: pointer;
+      font-weight: 700;
+      transition: all .2s;
+    }
+    .add-btn:hover { background: var(--brand); color: #fff; }
+
+    /* RESULTADO */
+    .resultado {
+      background: linear-gradient(135deg, #f3e5fd, #E1F5EE);
+      border-radius: var(--radius);
+      padding: 1.2rem;
+      margin-top: .8rem;
+    }
+    .res-titulo { font-size: .8rem; font-weight: 700; color: #6a0eb5; margin-bottom: .6rem; }
+    .res-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: .5rem 0;
+      border-bottom: 1px solid rgba(108,92,231,.12);
+    }
+    .res-item:last-child { border-bottom: none; }
+    .res-nome { font-size: .9rem; font-weight: 500; }
+    .res-val { font-size: 1.05rem; font-weight: 800; color: #6a0eb5; }
+    .aviso {
+      font-size: .8rem;
+      color: #3B6D11;
+      background: #EAF3DE;
+      padding: .5rem .8rem;
+      border-radius: 8px;
+      margin-top: .6rem;
+      line-height: 1.4;
+    }
+    .aviso.warn { color: #633806; background: #FAEEDA; }
+
+    .btn-primary {
+      width: 100%;
+      background: var(--brand);
+      color: #fff;
+      border: none;
+      padding: .85rem;
+      border-radius: var(--radius-sm);
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: .3rem;
+      transition: background .2s, transform .15s;
+    }
+    .btn-primary:hover { background: var(--brand-dark); transform: translateY(-1px); }
+
+    .btn-green {
+  background: #67b347;
+}
+
+.btn-green:hover {
+  background: #6BCB4D;
+}
+    .btn-primary:active { transform: translateY(0); }
+
+    /* PIX */
+    .qr-area { text-align: center; padding: 1rem; }
+    .qr-box {
+      display: inline-block;
+      background: #fff;
+      padding: 14px;
+      border-radius: 14px;
+      border: 3px solid var(--brand);
+    }
+    .pix-key-display {
+      background: var(--surface2);
+      border-radius: 8px;
+      padding: .7rem 1rem;
+      font-family: 'Courier New', monospace;
+      font-size: .78rem;
+      word-break: break-all;
+      margin: .6rem 0;
+      color: var(--text2);
+      border: 1px solid var(--border);
+    }
+    .copy-btn {
+      background: none;
+      border: 2px solid var(--brand);
+      color: var(--brand);
+      padding: .45rem 1.1rem;
+      border-radius: 8px;
+      font-size: .85rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all .2s;
+    }
+    .copy-btn:hover { background: var(--brand); color: #fff; }
+    .boleto-box {
+      background: var(--surface2);
+      border: 2px dashed var(--border);
+      border-radius: 10px;
+      padding: 1rem 1.2rem;
+      font-size: .85rem;
+    }
+    .boleto-line {
+      display: flex;
+      justify-content: space-between;
+      padding: .3rem 0;
+      border-bottom: 1px solid var(--border);
+      color: var(--text2);
+    }
+    .boleto-line:last-of-type { border-bottom: none; }
+    .boleto-line strong { color: var(--text); font-weight: 600; }
+
+    /* DASHBOARD */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 1rem;
+    }
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 1rem;
+      text-align: center;
+    }
+    .stat-label { font-size: .72rem; color: var(--text2); font-weight: 600; text-transform: uppercase; letter-spacing: .05em; margin-bottom: .3rem; }
+    .stat-val { font-size: 1.25rem; font-weight: 800; color: var(--brand); }
+
+    .chart-wrap { height: 170px; display: flex; align-items: flex-end; gap: 8px; padding: 10px 0 0; }
+    .bar-group { display: flex; flex-direction: column; align-items: center; flex: 1; gap: 5px; }
+    .bar { width: 100%; border-radius: 6px 6px 0 0; min-height: 4px; transition: height .5s cubic-bezier(.4,0,.2,1); }
+    .bar-label { font-size: .7rem; color: var(--text2); }
+    .bar-val { font-size: .72rem; font-weight: 700; color: var(--text); }
+
+    .legend { display: flex; gap: 14px; margin-top: .7rem; flex-wrap: wrap; }
+    .legend-item { display: flex; align-items: center; gap: 5px; font-size: .78rem; color: var(--text2); }
+    .dot { width: 10px; height: 10px; border-radius: 50%; }
+
+    .hist-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: .65rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .hist-item:last-child { border-bottom: none; }
+    .hist-desc { font-size: .9rem; font-weight: 600; }
+    .hist-meta { font-size: .75rem; color: var(--text2); margin-top: 2px; }
+    .hist-val { font-weight: 800; font-size: 1rem; color: var(--danger); }
+    .badge {
+      display: inline-flex;
+      padding: .18rem .6rem;
+      border-radius: 10px;
+      font-size: .7rem;
+      font-weight: 700;
+      margin-left: 8px;
+    }
+    .badge.ok { background: #EAF3DE; color: #3B6D11; }
+    .badge.pend { background: #FAEEDA; color: #633806; }
+
+    /* TOAST */
+    .toast {
+      position: fixed;
+      bottom: 1.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #2C2C2A;
+      color: #fff;
+      padding: .7rem 1.4rem;
+      border-radius: 24px;
+      font-size: .88rem;
+      font-weight: 500;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .3s, bottom .3s;
+      z-index: 999;
+      white-space: nowrap;
+      box-shadow: 0 4px 20px rgba(0,0,0,.25);
+    }
+    .toast.show { opacity: 1; bottom: 2rem; }
+
+    @media (max-width: 480px) {
+      .stats { grid-template-columns: repeat(2, 1fr); }
+      .features { grid-template-columns: 1fr 1fr; }
+      .hero h1 { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- BOTÃO EDUCAÇÃO FINANCEIRA -->
+<a href="EdFinPage.html" class="edu-btn" onclick="showEduContent(event)">
+  📚 Educação Financeira
+</a>
+
+<div class="app">
+
+  <!-- HERO -->
+  <div class="hero">
+    <h1>🤝 Racha Contas</h1>
+    <p>Acabou a confusão de "quem deve quanto".<br>Gere Pix, acompanhe gastos e aprenda a economizar!</p>
+    <button class="btn-hero" onclick="goToTab('divisor')">🚀 Começar agora</button>
+  </div>
+
+  <!-- FEATURE CARDS -->
+  <div class="features">
+    <div class="feature-card">
+      <div class="feature-icon">✂️</div>
+      <h3>Divisor Automático</h3>
+      <p>Divida qualquer valor entre amigos com arredondamento inteligente</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📊</div>
+      <h3>Dashboard Completo</h3>
+      <p>Acompanhe seus gastos por semana e mês com gráficos</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">💳</div>
+      <h3>Pix + Boleto</h3>
+      <p>Cobre de forma prática com QR Code ou boleto formal</p>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab active" data-tab="divisor" onclick="goToTab('divisor')">✂️ Divisor</button>
+    <button class="tab" data-tab="pix" onclick="goToTab('pix')">📱 Pix</button>
+    <button class="tab" data-tab="dashboard" onclick="goToTab('dashboard')">📊 Dashboard</button>
+  </div>
+  <!-- ===== DIVISOR ===== -->
+  <div class="panel active" id="panel-divisor">
+    <div class="card">
+      <div class="card-title">💰 Valor da conta</div>
+      <div class="row">
+        <label>Descrição</label>
+        <input type="text" id="desc" placeholder="Ex: Jantar no rodízio">
+      </div>
+      <div class="row">
+        <label>Valor (R$)</label>
+        <input type="number" id="valor" placeholder="0,00" min="0" step="0.01" oninput="calcular()">
+      </div>
+      <div class="row">
+        <label>Divisão</label>
+        <select id="tipo" onchange="toggleTipo()">
+          <option value="igual">Igualmente</option>
+          <option value="porcentagem">Por porcentagem</option>
+          <option value="manual">Valores manuais</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">👥 Amigos</div>
+      <div class="amigos-list" id="amigos-list"></div>
+      <div class="row" style="margin-top:.4rem">
+        <input type="text" id="novo-amigo" placeholder="Nome do amigo" onkeydown="if(event.key==='Enter') addAmigo()">
+        <button class="add-btn" onclick="addAmigo()">+ Adicionar</button>
+      </div>
+    </div>
+
+    <div id="manual-area" style="display:none">
+      <div class="card">
+        <div class="card-title" id="manual-title">⚖️ Valores por pessoa</div>
+        <div id="manual-inputs"></div>
+      </div>
+    </div>
+
+    <div class="resultado" id="resultado" style="display:none">
+      <div class="res-titulo">✅ Resultado da divisão</div>
+      <div id="res-items"></div>
+      <div id="aviso-arredondamento" class="aviso" style="display:none"></div>
+    </div>
+
+    <button class="btn-primary" onclick="salvarGasto()">💾 Salvar no histórico</button>
+  </div>
+
+  <!-- ===== PIX ===== -->
+  <div class="panel" id="panel-pix">
+    <div class="card">
+      <div class="card-title">📲 Gerar cobrança Pix</div>
+      <div class="row">
+        <label>Recebedor</label>
+        <input type="text" id="pix-nome" placeholder="Seu nome completo">
+      </div>
+      <div class="row">
+        <label>Tipo de chave</label>
+        <select id="pix-tipo">
+          <option value="cpf">CPF</option>
+          <option value="email">E-mail</option>
+          <option value="telefone">Telefone</option>
+          <option value="aleatoria">Chave aleatória</option>
+        </select>
+      </div>
+      <div class="row">
+        <label>Chave Pix</label>
+        <input type="text" id="pix-chave" placeholder="Digite a chave">
+      </div>
+      <div class="row">
+        <label>Valor (R$)</label>
+        <input type="number" id="pix-valor" placeholder="0,00" min="0" step="0.01">
+      </div>
+      <div class="row">
+        <label>Descrição</label>
+        <input type="text" id="pix-desc" placeholder="Motivo do pagamento">
+      </div>
+      <button class="btn-primary" onclick="gerarPix()">⚡ Gerar QR Code Pix</button>
+      <button class="btn-primary btn-green" onclick="gerarPixCompleto()">💠 Gerar Pix Completo</button>
+    </div>
+
+    <div class="card" id="pix-resultado" style="display:none">
+      <div class="card-title">📷 QR Code gerado</div>
+      <div class="qr-area">
+        <div class="qr-box">
+          <canvas id="qr-canvas" width="180" height="180"></canvas>
+        </div>
+        <p style="font-size:.8rem;color:var(--text2);margin-top:.6rem">Escaneie com o app do banco</p>
+      </div>
+      <div class="card-title" style="margin-top:.5rem">Código Pix (Copia e Cola)</div>
+      <div class="pix-key-display" id="pix-code-display"></div>
+      <button class="copy-btn" onclick="copiarPix()">📋 Copiar código</button>
+    </div>
+
+    <div class="card" id="boleto-area" style="display:none">
+      <div class="card-title">🧾 Boleto simulado</div>
+      <div class="boleto-box" id="boleto-content"></div>
+    </div>
+  </div>
+
+  <!-- ===== DASHBOARD ===== -->
+  <div class="panel" id="panel-dashboard">
+    <div class="stats">
+      <div class="stat-card">
+        <div class="stat-label">Total gasto</div>
+        <div class="stat-val" id="stat-total">R$ 0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Contas</div>
+        <div class="stat-val" id="stat-contas">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Média/conta</div>
+        <div class="stat-val" id="stat-media">R$ 0</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📈 Gastos por semana</div>
+      <div class="chart-wrap" id="chart-bars"></div>
+      <div class="legend">
+        <div class="legend-item"><div class="dot" style="background:#820ad1"></div>Semana atual</div>
+        <div class="legend-item"><div class="dot" style="background:#c06ef3"></div>Semanas anteriores</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📋 Histórico de gastos</div>
+      <div id="hist-list">
+        <p style="font-size:.88rem;color:var(--text2);text-align:center;padding:1.5rem 0">
+          Nenhum gasto salvo ainda.<br>Divida uma conta e salve no histórico!
+        </p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  // ========== STATE ==========
+  let amigos = ['Você', 'Ana', 'Carlos'];
+  let gastos = [];
+  let pixCode = '';
+
+  // ========== UTILS ==========
+  function toast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2400);
+  }
+
+  function goToTab(name) {
+    document.querySelectorAll('.tab').forEach(t => {
+      t.classList.toggle('active', t.dataset.tab === name);
+    });
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('panel-' + name).classList.add('active');
+    if (name === 'dashboard') renderDashboard();
+  }
+
+  // ========== DIVISOR ==========
+  function renderAmigos() {
+    const list = document.getElementById('amigos-list');
+    list.innerHTML = amigos.map((a, i) =>
+      `<span class="amigo-tag">${a}<button onclick="removeAmigo(${i})">×</button></span>`
+    ).join('');
+    renderManualInputs();
+    calcular();
+  }
+
+  function addAmigo() {
+    const input = document.getElementById('novo-amigo');
+    const nome = input.value.trim();
+    if (!nome) { toast('⚠️ Digite um nome!'); return; }
+    if (amigos.includes(nome)) { toast('⚠️ Esse nome já está na lista!'); return; }
+    amigos.push(nome);
+    input.value = '';
+    renderAmigos();
+    toast('✅ ' + nome + ' adicionado(a)!');
+  }
+
+  function removeAmigo(idx) {
+    if (amigos.length <= 1) { toast('⚠️ Precisa de pelo menos 1 pessoa!'); return; }
+    const nome = amigos[idx];
+    amigos.splice(idx, 1);
+    renderAmigos();
+    toast('🗑️ ' + nome + ' removido(a)');
+  }
+
+  function toggleTipo() {
+    const tipo = document.getElementById('tipo').value;
+    document.getElementById('manual-area').style.display = tipo === 'igual' ? 'none' : 'block';
+    if (tipo === 'porcentagem') document.getElementById('manual-title').textContent = '📊 Porcentagem por pessoa';
+    if (tipo === 'manual') document.getElementById('manual-title').textContent = '⚖️ Valores por pessoa';
+    renderManualInputs();
+    calcular();
+  }
+
+  function renderManualInputs() {
+    const tipo = document.getElementById('tipo').value;
+    const container = document.getElementById('manual-inputs');
+    if (tipo === 'igual') { container.innerHTML = ''; return; }
+    container.innerHTML = amigos.map((a, i) => `
+      <div class="row">
+        <label>${a}</label>
+        <input type="number" id="m${i}"
+          placeholder="${tipo === 'porcentagem' ? '% (ex: 33)' : 'R$ (ex: 50,00)'}"
+          min="0" step="${tipo === 'porcentagem' ? '1' : '0.01'}"
+          oninput="calcular()">
+      </div>
+    `).join('');
+  }
+
+  function calcular() {
+    const v = parseFloat(document.getElementById('valor').value) || 0;
+    const tipo = document.getElementById('tipo').value;
+    const resultado = document.getElementById('resultado');
+    const resItems = document.getElementById('res-items');
+    const aviso = document.getElementById('aviso-arredondamento');
+
+    if (v <= 0 || amigos.length === 0) { resultado.style.display = 'none'; return; }
+
+    let parts = [];
+
+    if (tipo === 'igual') {
+      const base = Math.floor((v / amigos.length) * 100) / 100;
+      let centavosExtras = Math.round((v - base * amigos.length) * 100);
+      parts = amigos.map((a, i) => ({ nome: a, val: base + (i < centavosExtras ? 0.01 : 0) }));
+      const diff = Math.round((v - parts.reduce((s, p) => s + p.val, 0)) * 100);
+      aviso.className = 'aviso';
+      aviso.style.display = centavosExtras > 0 ? 'block' : 'none';
+      if (centavosExtras > 0) aviso.textContent = `💡 R$ 0,01 distribuído entre os primeiros para fechar o valor exato.`;
+
+    } else if (tipo === 'porcentagem') {
+      let totalPerc = 0;
+      parts = amigos.map((a, i) => {
+        const p = parseFloat(document.getElementById('m' + i)?.value) || 0;
+        totalPerc += p;
+        return { nome: a, perc: p, val: Math.round((p / 100) * v * 100) / 100 };
+      });
+      const ok = Math.abs(totalPerc - 100) < 0.01;
+      aviso.className = ok ? 'aviso' : 'aviso warn';
+      aviso.style.display = 'block';
+      aviso.textContent = ok
+        ? `✅ Porcentagens somam 100%`
+        : `⚠️ Soma atual: ${totalPerc.toFixed(1)}% — precisa ser exatamente 100%`;
+
+    } else {
+      let soma = 0;
+      parts = amigos.map((a, i) => {
+        const p = parseFloat(document.getElementById('m' + i)?.value) || 0;
+        soma += p;
+        return { nome: a, val: p };
+      });
+      const diff = Math.round((v - soma) * 100) / 100;
+      aviso.className = diff === 0 ? 'aviso' : 'aviso warn';
+      aviso.style.display = 'block';
+      aviso.textContent = diff === 0
+        ? `✅ Valores somam R$ ${v.toFixed(2)}`
+        : `⚠️ ${diff > 0 ? `Faltam R$ ${diff.toFixed(2)}` : `Excesso de R$ ${Math.abs(diff).toFixed(2)}`} para fechar R$ ${v.toFixed(2)}`;
+    }
+
+    resItems.innerHTML = parts.map(p =>
+      `<div class="res-item">
+        <span class="res-nome">${p.nome}</span>
+        <span class="res-val">R$ ${p.val.toFixed(2)}</span>
+      </div>`
+    ).join('');
+    resultado.style.display = 'block';
+  }
+
+  function salvarGasto() {
+    const v = parseFloat(document.getElementById('valor').value) || 0;
+    const d = document.getElementById('desc').value.trim() || 'Gasto sem nome';
+    if (v <= 0) { toast('⚠️ Informe um valor antes de salvar!'); return; }
+    gastos.push({ desc: d, valor: v, data: new Date(), amigos: amigos.length, pago: false });
+    toast('✅ Gasto salvo no histórico!');
+    document.getElementById('desc').value = '';
+    document.getElementById('valor').value = '';
+    document.getElementById('resultado').style.display = 'none';
+  }
+
+  // ========== PIX ==========
+  function gerarPix() {
+    const nome = document.getElementById('pix-nome').value.trim();
+    const chave = document.getElementById('pix-chave').value.trim();
+    const valor = parseFloat(document.getElementById('pix-valor').value) || 0;
+    const desc = document.getElementById('pix-desc').value.trim() || 'Pagamento';
+
+    if (!nome) { toast('⚠️ Informe o nome do recebedor!'); return; }
+    if (!chave) { toast('⚠️ Informe a chave Pix!'); return; }
+    if (valor <= 0) { toast('⚠️ Informe um valor válido!'); return; }
+
+    pixCode = gerarEMV(nome, chave, valor, desc);
+
+    document.getElementById('pix-code-display').textContent = pixCode;
+    document.getElementById('pix-resultado').style.display = 'block';
+
+    renderQR(pixCode);
+
+    const hoje = new Date();
+    const venc = new Date(hoje.getTime() + 3 * 24 * 60 * 60 * 1000);
+    document.getElementById('boleto-content').innerHTML = `
+      <div class="boleto-line"><span>Beneficiário</span><strong>${nome}</strong></div>
+      <div class="boleto-line"><span>Chave Pix</span><strong>${chave}</strong></div>
+      <div class="boleto-line"><span>Valor</span><strong>R$ ${valor.toFixed(2)}</strong></div>
+      <div class="boleto-line"><span>Descrição</span><strong>${desc}</strong></div>
+      <div class="boleto-line"><span>Data geração</span><strong>${hoje.toLocaleDateString('pt-BR')}</strong></div>
+      <div class="boleto-line"><span>Vencimento</span><strong>${venc.toLocaleDateString('pt-BR')}</strong></div>
+      <p style="margin-top:.8rem;font-size:.75rem;color:var(--text2)">⚠️ Boleto simulado para fins de demonstração.</p>
+    `;
+    document.getElementById('boleto-area').style.display = 'block';
+    toast('⚡ QR Code Pix gerado com sucesso!');
+  }
+
+  function gerarPixCompleto() {
+  const nome = document.getElementById('pix-nome').value.trim();
+  const chave = document.getElementById('pix-chave').value.trim();
+  const valor = parseFloat(document.getElementById('pix-valor').value) || 0;
+  const desc = document.getElementById('pix-desc').value.trim() || 'Pagamento';
+
+  if (!nome) { toast('⚠️ Informe o nome do recebedor!'); return; }
+  if (!chave) { toast('⚠️ Informe a chave Pix!'); return; }
+  if (valor <= 0) { toast('⚠️ Informe um valor válido!'); return; }
+
+  const codigoPix = gerarEMV(nome, chave, valor, desc);
+
+  document.getElementById('pix-code-display').textContent = codigoPix;
+  document.getElementById('pix-resultado').style.display = 'block';
+
+  renderQR(codigoPix);
+
+  toast('✅ Pix completo gerado com sucesso!');
+}
+
+  function gerarEMV(nome, chave, valor, desc) {
+    const valorStr = valor.toFixed(2);
+    const nomeClean = nome.substring(0, 25).toUpperCase();
+    const descClean = desc.substring(0, 20);
+    const chaveField = tlv('01', chave);
+    const descField = descClean ? tlv('02', descClean) : '';
+    const merchant = tlv('00', 'BR.GOV.BCB.PIX') + chaveField + descField;
+    const merchantInfo = tlv('26', merchant);
+    const base = '000201' + merchantInfo + '52040000' + '5303986' +
+      tlv('54', valorStr) + '5802BR' +
+      tlv('59', nomeClean) + tlv('60', 'SAO PAULO') +
+      tlv('62', tlv('05', '***'));
+    return base + '6304' + crc16(base + '6304');
+  }
+
+  function tlv(tag, value) {
+    const len = value.length.toString().padStart(2, '0');
+    return tag + len + value;
+  }
+
+  function crc16(str) {
+    let crc = 0xFFFF;
+    for (let i = 0; i < str.length; i++) {
+      crc ^= str.charCodeAt(i) << 8;
+      for (let j = 0; j < 8; j++) {
+        crc = crc & 0x8000 ? (crc << 1) ^ 0x1021 : crc << 1;
+      }
+    }
+    return (crc & 0xFFFF).toString(16).toUpperCase().padStart(4, '0');
+  }
+
+  function renderQR(data) {
+    const canvas = document.getElementById('qr-canvas');
+    const ctx = canvas.getContext('2d');
+    const size = 180, cell = 5, cols = Math.floor(size / cell);
+    ctx.clearRect(0, 0, size, size);
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, size, size);
+    ctx.fillStyle = '#5a0791';
+    const seed = data.split('').reduce((a, c) => ((a << 5) - a) + c.charCodeAt(0), 0);
+    function bit(x, y) { return ((seed * (x * 31 + 7) + y * 17 + x * y) % 11) < 5; }
+    for (let x = 0; x < cols; x++) {
+      for (let y = 0; y < cols; y++) {
+        if (bit(x, y)) ctx.fillRect(x * cell, y * cell, cell, cell);
+      }
+    }
+    // Finder patterns
+    [[1, 1], [cols - 8, 1], [1, cols - 8]].forEach(([ox, oy]) => {
+      ctx.fillStyle = '#5a0791';
+      ctx.fillRect(ox * cell, oy * cell, 7 * cell, 7 * cell);
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect((ox + 1) * cell, (oy + 1) * cell, 5 * cell, 5 * cell);
+      ctx.fillStyle = '#5a0791';
+      ctx.fillRect((ox + 2) * cell, (oy + 2) * cell, 3 * cell, 3 * cell);
+    });
+  }
+
+  function copiarPix() {
+    if (!pixCode) { toast('⚠️ Gere um QR Code primeiro!'); return; }
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(pixCode).then(() => toast('📋 Código copiado!'));
+    } else {
+      const ta = document.createElement('textarea');
+      ta.value = pixCode;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      toast('📋 Código copiado!');
+    }
+  }
+
+  // ========== DASHBOARD ==========
+  function renderDashboard() {
+    const total = gastos.reduce((s, g) => s + g.valor, 0);
+    document.getElementById('stat-total').textContent = 'R$ ' + total.toFixed(2);
+    document.getElementById('stat-contas').textContent = gastos.length;
+    document.getElementById('stat-media').textContent = 'R$ ' + (gastos.length ? (total / gastos.length).toFixed(2) : '0.00');
+
+    // Gráfico de barras (5 semanas)
+    const semanas = ['S-4', 'S-3', 'S-2', 'S-1', 'Agora'];
+    const seed = Date.now();
+    const vals = [
+      120 + (seed % 80),
+      90 + ((seed >> 2) % 100),
+      150 + ((seed >> 4) % 70),
+      80 + ((seed >> 6) % 120),
+      total > 0 ? total : 60 + ((seed >> 8) % 130)
+    ];
+    const max = Math.max(...vals, 1);
+    const maxH = 130;
+    document.getElementById('chart-bars').innerHTML = semanas.map((s, i) => `
+      <div class="bar-group">
+        <span class="bar-val">R$${Math.round(vals[i])}</span>
+        <div class="bar" style="height:${Math.round((vals[i] / max) * maxH)}px;background:${i === 4 ? '#820ad1' : '#c06ef3'}"></div>
+        <span class="bar-label">${s}</span>
+      </div>
+    `).join('');
+
+    // Histórico
+    const hl = document.getElementById('hist-list');
+    if (!gastos.length) {
+      hl.innerHTML = `<p style="font-size:.88rem;color:var(--text2);text-align:center;padding:1.5rem 0">
+        Nenhum gasto salvo ainda.<br>Divida uma conta e salve no histórico!
+      </p>`;
+      return;
+    }
+    hl.innerHTML = gastos.slice().reverse().map((g, i) => `
+      <div class="hist-item">
+        <div>
+          <div class="hist-desc">${g.desc}</div>
+          <div class="hist-meta">${g.amigos} pessoa(s) · ${g.data.toLocaleDateString('pt-BR')}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <span class="hist-val">R$ ${g.valor.toFixed(2)}</span>
+          <span class="badge ${g.pago ? 'ok' : 'pend'}" onclick="togglePago(${gastos.length - 1 - i})" style="cursor:pointer">
+            ${g.pago ? '✅ Pago' : '⏳ Pendente'}
+          </span>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function togglePago(idx) {
+    gastos[idx].pago = !gastos[idx].pago;
+    renderDashboard();
+    toast(gastos[idx].pago ? '✅ Marcado como pago!' : '⏳ Marcado como pendente');
+  }
+
+  // ========== INIT ==========
+  renderAmigos();
+</script>
+
+</body>
+</html>
